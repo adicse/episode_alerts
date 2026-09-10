@@ -10,7 +10,6 @@ def tvmz_get_curr_and_next_episode(series_id: int) -> dict[str, str]:
     
     resp.raise_for_status()
     temp_dict = resp.json()['_links']
-    print(temp_dict)
     temp_dict['name'] = resp.json()['name']
     if 'self' in temp_dict:
         del temp_dict['self']
@@ -19,15 +18,16 @@ def tvmz_get_curr_and_next_episode(series_id: int) -> dict[str, str]:
 
 def get_latest_episode(series_name: str):
     series_episodes = tvmz_get_curr_and_next_episode(52178)
+    print(series_episodes)
+    
     latest_episodes = {}
-    
-    
     with open(DATA_FILE) as fr:
         latest_episodes = json.load(fr)
         
     series = latest_episodes.get(series_name, {})
     series['aired_episode'] = series_episodes['previousepisode']
-    
+    print(f"aired_episode: {series['aired_episode']}")
+
     latest_episodes[series_name] = series
     
     with open(DATA_FILE, 'w') as fw:
