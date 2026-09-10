@@ -11,6 +11,7 @@ def tvmz_get_curr_and_next_episode(series_id: int) -> dict[str, str]:
     resp.raise_for_status()
     temp_dict = resp.json()['_links']
     temp_dict['name'] = resp.json()['name']
+    temp_dict['id'] = resp.json()['id']
     if 'self' in temp_dict:
         del temp_dict['self']
         
@@ -27,6 +28,8 @@ def get_latest_episode(series_name: str):
         
     series = latest_episodes.get(series_name, {})
     series['aired_episode'] = series_episodes['previousepisode']
+    series['tvmaze_id'] = series_episodes['id']
+    
     print(f"aired_episode: {series['aired_episode']}")
 
     latest_episodes[series_name] = series
