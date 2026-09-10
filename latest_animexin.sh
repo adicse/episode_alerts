@@ -11,13 +11,16 @@ function get_axing_latest_episode() {
     local episode_regex="$3"
     local temp_page="/tmp/page.txt"
 
-    echo "getting page"
-    curl -vL "${url}" -o "${temp_page}"
+    echo "getting page: ${url}"
+    curl -vL \
+        -A 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140.0.0.0 Safari/537.36' \
+        "${url}" -o "${temp_page}"
     wc -l "${temp_page}"
 
     local latest_episode="$(cat "${temp_page}" | grep -m 1 -P -o ${episode_regex})"
     if [[ -z "${latest_episode// /}" ]]; then
         echo "Could not find latest episode"
+        curl -vL https://animexin.dev/swallowed-star-season-5
         exit 1
     fi
     echo "latest_episode: ${latest_episode}"
