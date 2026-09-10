@@ -15,6 +15,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Test AnimeXin
+        run: |
+          set -x
+          curl -vIL https://animexin.dev/swallowed-star-season-5
+          curl -vL https://animexin.dev/swallowed-star-season-5 -o /tmp/page.html
+          wc -c /tmp/page.html
+          head -c 500 /tmp/page.html
       # 1. Checkout the repository code
       - name: Checkout repository
         uses: actions/checkout@v4
