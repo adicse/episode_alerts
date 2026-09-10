@@ -1,0 +1,44 @@
+name: Find Latest Release
+
+on:
+  schedule:
+    # Runs exactly at the start of every hour (UTC)
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allows you to run it manually anytime from the UI
+
+# Give the workflow permission to write changes back to your repository
+permissions:
+  contents: write
+
+jobs:
+  run-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Make your bash script executable and run it
+      # Replace 'your-script.sh' with your actual script's filename
+      - name: Execute Bash Script
+        run: |
+          chmod +x your-script.sh
+          ./latest_animexin.sh
+
+      # 3. Commit and push the updated text file back to the repo
+      # Replace 'output.txt' with the file your script modifies
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@://github.com"
+          
+          git add latest_episodes.txt
+          
+          # Only commit if the text file actually changed, preventing empty run errors
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: auto-update text file [skip ci]"
+            git push
+          else
+            echo "No changes detected in the text file. Skipping commit."
+          fi
