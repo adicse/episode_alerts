@@ -9,13 +9,20 @@ def tvmz_get_curr_and_next_episode(series_id: int) -> dict[str, str]:
     resp = requests.get(api)
     
     resp.raise_for_status()
-    temp_dict = resp.json()['_links']
-    temp_dict['name'] = resp.json()['name']
-    temp_dict['id'] = resp.json()['id']
-    if 'self' in temp_dict:
-        del temp_dict['self']
+    temp_json = resp.json()
+    
+    return_dict = resp.json()['_links']
+    return_dict['name'] = temp_json['name']
+    return_dict['id'] = temp_json['id']
+    
+    temp_json = resp.json()['_embedded']['nextepisode']
+    return_dict['season'] = temp_json['season']
+    return_dict['number'] = temp_json['number'] - 1
+    
+    if 'self' in return_dict:
+        del return_dict['self']
         
-    return temp_dict
+    return return_dict
 
 def get_latest_episode(series_name: str):
     latest_episodes = {}
@@ -27,7 +34,10 @@ def get_latest_episode(series_name: str):
     print(series_episodes)
         
     series = latest_episodes.get(series_name, {})
-    series['aired_episode'] = series_episodes['previousepisode']
+    series['aired_episode'] = {}
+    for key in ['name', 'season', 'number']:
+        series['aired_episode'][key] = series_episodes[key]
+        
     series['tvmaze_id'] = series_episodes['id']
     
     print(f"aired_episode: {series['aired_episode']}")
