@@ -4,11 +4,21 @@ swallowed_star_regex='Swall.*?Episode.*?(?=<)'
 swallowed_star_link='https://animexin.dev/swallowed-star-season-5' 
 
 function get_axing_latest_episode() {
-    local url="$1"
-    local episode_regex="$2"
+    local series_name="$1"
+    local url="$2"
+    local episode_regex="$3"
     local page="$(curl -ksL "${url}")"
 
-    echo "${page}" | grep -m 1 -P -o ${episode_regex}
+    local latest_episode="$(echo "${page}" | grep -m 1 -P -o ${episode_regex})"
+
+    grep "${latest_episode}" latest_episodes.txt
+    if [[ "$?" -eq 0 ]]; then
+        # no new episode
+        return
+    fi
+
+    sed -i "s/${series_name}:.*$/${series_name}: ${latest_episode}/" latest_episodes.txt
+
 }
 
 
