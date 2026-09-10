@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  run-and-commit:
+  find_latest_releases:
     runs-on: ubuntu-latest
 
     steps:
