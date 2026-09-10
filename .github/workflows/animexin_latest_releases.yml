@@ -23,7 +23,7 @@ jobs:
       # Replace 'your-script.sh' with your actual script's filename
       - name: Execute Bash Script
         run: |
-          chmod +x your-script.sh
+          chmod +x latest_animexin.sh
           ./latest_animexin.sh
 
       # 3. Commit and push the updated text file back to the repo
