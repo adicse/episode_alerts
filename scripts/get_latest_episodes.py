@@ -17,12 +17,13 @@ def tvmz_get_curr_and_next_episode(series_id: int) -> dict[str, str]:
     return temp_dict
 
 def get_latest_episode(series_name: str):
-    series_episodes = tvmz_get_curr_and_next_episode(52178)
-    print(series_episodes)
-    
     latest_episodes = {}
+    
     with open(DATA_FILE) as fr:
         latest_episodes = json.load(fr)
+        
+    series_episodes = tvmz_get_curr_and_next_episode(latest_episodes[series_name]['tvmaze_id'])
+    print(series_episodes)
         
     series = latest_episodes.get(series_name, {})
     series['aired_episode'] = series_episodes['previousepisode']
