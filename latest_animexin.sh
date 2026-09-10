@@ -12,8 +12,13 @@ function get_axing_latest_episode() {
 
     echo "getting page"
     local page="$(curl -ksL "${url}")"
+    wc -l "${page}"
 
     local latest_episode="$(echo "${page}" | grep -m 1 -P -o ${episode_regex})"
+    if [[ -z "${latest_episode// /}" ]]; then
+        echo "Could not find latest episode"
+        exit 1
+    fi
     echo "latest_episode: ${latest_episode}"
 
     grep "${latest_episode}" latest_episodes.txt
