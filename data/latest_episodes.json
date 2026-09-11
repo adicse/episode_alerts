@@ -1,1 +1,10 @@
-{"swallowed_star": {"aired_episode": {"href": "https://api.tvmaze.com/episodes/3666506", "name": "Episode 240"}}}
+{
+    "swallowed_star": {
+        "aired_episode": {
+            "name": "Swallowed Star",
+            "season": 3,
+            "number": 155
+        },
+        "tvmaze_id": 52178
+    }
+}
