@@ -1,7 +1,9 @@
-
+#!/bin/bash
 
 swallowed_star_regex='Swall.*?Episode.*?(?=<)'
 swallowed_star_link='https://animexin.dev/swallowed-star-season-5' 
+
+GIT_ROOT="$(command git rev-parse --show-toplevel 2> /dev/null)"
 
 export SED_DELIM=$'\03'
 
@@ -10,32 +12,33 @@ function get_axing_latest_episode() {
     local url="$2"
     local episode_regex="$3"
     local temp_page="/tmp/page.txt"
+    local data_file="${GIT_ROOT}/data/latest_episodes.txt"
 
-    echo "getting page: ${url}"
-    curl -vL \
+    qInfo "getting page: ${url}"
+    curl -sL \
         -A 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140.0.0.0 Safari/537.36' \
         "${url}" -o "${temp_page}"
-    wc -l "${temp_page}"
 
     local latest_episode="$(cat "${temp_page}" | grep -m 1 -P -o ${episode_regex})"
     if [[ -z "${latest_episode// /}" ]]; then
         echo "Could not find latest episode"
-        curl -vL https://animexin.dev/swallowed-star-season-5
         exit 1
     fi
-    echo "latest_episode: ${latest_episode}"
 
-    grep "${latest_episode}" latest_episodes.txt
+    grep "${latest_episode}" "${data_file}"
     if [[ "$?" -eq 0 ]]; then
         # no new episode
+        fnInfo "No new episode released"
         return
+    else
+        green "New episode released"
     fi
 
-    if grep -qF "${series_name}:" latest_episodes.txt; then
+    if grep -qF "${series_name}:" "${data_file}"; then
         sed -i "s${SED_DELIM}^${series_name}:.*${SED_DELIM}${series_name}: ${latest_episode}${SED_DELIM}" \
-            latest_episodes.txt
+            "${data_file}"
     else
-        printf '%s: %s\n' "$series_name" "$latest_episode" >> latest_episodes.txt
+        printf '%s: %s\n' "$series_name" "$latest_episode" >> "${data_file}"
     fi
 
 }
